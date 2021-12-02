@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mastodon-s3-cache
+  labels:
+    app: mastodon
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    cert-manager.io/acme-challenge-type: http01
+spec:
+  tls:
+    - hosts:
+        - s3.mastodon.example.com
+      secretName: example-mastodon-s3-tls
+  rules:
+    - host: s3.mastodon.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mastodon-s3-cache
+                port: 
+                  number: 443
